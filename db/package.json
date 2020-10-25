@@ -1,0 +1,29 @@
+{
+  "name": "term-project-db",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint \"**/*.js\"",
+    "lint-fix": "eslint \"{**/*.js,}\" --fix",
+    "migration:generate": "sequelize migration:generate",
+    "migrate": "sequelize db:migrate",
+    "migrate:undo": "sequelize db:migrate:undo"
+  },
+  "author": "rallsopp06@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.4.1",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.12.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.1.2"
+  }
+}
