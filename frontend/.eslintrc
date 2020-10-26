@@ -1,0 +1,60 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "prettier",
+    "prettier/react"
+  ],
+  "plugins": [
+    "react",
+    "prettier",
+    "react-hooks"
+  ],
+  "globals": {
+    "document": false,
+    "paypal": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true,
+    "mocha": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js"]
+      }
+    },
+    "react": {
+      "version": "16.8"
+    }
+  },
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-unused-vars": 2,
+    "no-duplicate-imports": 0,
+    "react/prefer-stateless-function": 2,
+    "react/prop-types": [1, { "skipUndeclared": true }],
+    "react/display-name": 2,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "prettier/prettier": ["error", {
+      "useTabs": true,
+      "tabWidth": 2,
+      "printWidth": 120,
+      "singleQuote": true,
+      "jsxBracketSameLine": true,
+      "trailingComma": "es5",
+      "endOfLine": "lf"
+    }],
+    "space-before-function-paren": 0
+  }
+}
