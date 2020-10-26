@@ -2,18 +2,19 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from '@material-ui/styles/ThemeProvider';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { ApolloProvider } from '@apollo/client';
+import apolloClient from './ApolloClient';
 import theme from './mui-theme';
 import App from './App';
-import { ApiClientProvider } from './ApiClientContext';
 
 function AppWrapper() {
 	return (
-		<MuiThemeProvider theme={theme}>
-			<CssBaseline />
-			<ApiClientProvider>
+		<ApolloProvider client={apolloClient}>
+			<MuiThemeProvider theme={theme}>
+				<CssBaseline />
 				<App />
-			</ApiClientProvider>
-		</MuiThemeProvider>
+			</MuiThemeProvider>
+		</ApolloProvider>
 	);
 }
 

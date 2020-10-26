@@ -8,7 +8,7 @@ const PG_DATABASE = process.env.PG_DATABASE;
 const PG_USER = process.env.PG_USER;
 const PG_PWD = process.env.PG_PWD;
 const PG_HOST = process.env.PG_HOST;
-const GRPC_PORT = process.env.PORT;
+const PORT = process.env.PORT;
 
 module.exports = {
 	AUDIO_BUCKET,
@@ -21,5 +21,5 @@ module.exports = {
 	PG_USER,
 	PG_PWD,
 	PG_HOST,
-	GRPC_PORT,
+	PORT,
 };
