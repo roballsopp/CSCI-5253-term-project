@@ -1,5 +1,5 @@
 const amqp = require('amqplib/callback_api');
-const { RABBITMQ_HOST, AUDIO_QUEUE, RABBITMQ_USER, RABBITMQ_PWD, RABBITMQ_PORT } = require('./config');
+const { RABBITMQ_HOST, WORK_QUEUE, RABBITMQ_USER, RABBITMQ_PWD, RABBITMQ_PORT } = require('./config');
 
 const CONNECTION_STR = `amqp://${RABBITMQ_USER}:${RABBITMQ_PWD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}`;
 
@@ -20,13 +20,13 @@ function getQueue(connection) {
 			if (err) return reject(err);
 
 			// ensure the queue is there
-			channel.assertQueue(AUDIO_QUEUE, {
+			channel.assertQueue(WORK_QUEUE, {
 				durable: true, // persist queue to disk so its there even if rabbitmq restarts
 			});
 
 			resolve({
 				send: (msg) => {
-					channel.sendToQueue(AUDIO_QUEUE, Buffer.from(JSON.stringify(msg)), { persistent: true });
+					channel.sendToQueue(WORK_QUEUE, Buffer.from(JSON.stringify(msg)), { persistent: true });
 				},
 			});
 		});

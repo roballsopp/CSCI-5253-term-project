@@ -1,6 +1,6 @@
 const AUDIO_BUCKET = process.env.AUDIO_BUCKET;
 const RABBITMQ_HOST = process.env.RABBITMQ_HOST;
-const AUDIO_QUEUE = process.env.AUDIO_QUEUE;
+const WORK_QUEUE = process.env.WORK_QUEUE;
 const RABBITMQ_USER = encodeURIComponent(process.env.RABBITMQ_USER);
 const RABBITMQ_PWD = encodeURIComponent(process.env.RABBITMQ_PWD);
 const RABBITMQ_PORT = process.env.RABBITMQ_PORT;
@@ -13,7 +13,7 @@ const PORT = process.env.PORT;
 module.exports = {
 	AUDIO_BUCKET,
 	RABBITMQ_HOST,
-	AUDIO_QUEUE,
+	WORK_QUEUE,
 	RABBITMQ_USER,
 	RABBITMQ_PWD,
 	RABBITMQ_PORT,
