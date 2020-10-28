@@ -1,6 +1,13 @@
 import pika
 import os
 import sys
+import traceback
+import json
+from db import Connection
+import gcp
+from Wave import Wave
+import processor
+
 
 RABBITMQ_USER = os.getenv('RABBITMQ_USER')
 RABBITMQ_PWD = os.getenv('RABBITMQ_PWD')
@@ -11,19 +18,52 @@ PG_DATABASE = os.getenv('PG_DATABASE')
 PG_USER = os.getenv('PG_USER')
 PG_PWD = os.getenv('PG_PWD')
 PG_HOST = os.getenv('PG_HOST')
-AUDIO_BUCKET = os.getenv('AUDIO_BUCKET')
+
+
+pika_creds = pika.credentials.PlainCredentials(RABBITMQ_USER, RABBITMQ_PWD)
+pika_params = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=pika_creds)
+
+def process(job_id):
+	with Connection() as pg_conn:
+		res = pg_conn.find_job(job_id)
+
+		if res['rowcount'] != 1:
+			raise Exception(f'Could not find job {job_id}')
+
+		job, = res['rows']
+
+		# if job['state'] != 'queued':
+		# 	raise Exception(f"Expected job state 'queued', found '{job['state']}'. Skipping message.")
+
+		try:
+			audio_bytes = gcp.get_blob(job['file_key'])
+			pg_conn.begin_processing(job_id)
+			test_out = processor.get_transients(Wave.from_bytes(audio_bytes))
+			print('Saving...')
+			Wave(test_out).to_file('toots.wav')
+			pg_conn.finish_processing(job_id)
+		except Exception as e:
+			pg_conn.fail_processing(job_id)
+			raise e
 
 
 def callback(ch, method, properties, body):
-	print(" [x] Received %r" % body)
+	message = json.loads(body.decode())
+
+	if 'jobId' not in message:
+		raise Exception('Message missing required field `jobId`')
+
+	try:
+		process(message['jobId'])
+	except Exception as e:
+		traceback.print_exc()
+
 	# acknowledge message only once processing completes successfully
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def main():
-	credentials = pika.credentials.PlainCredentials(RABBITMQ_USER, RABBITMQ_PWD)
-	conn_params = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=credentials)
-	connection = pika.BlockingConnection(conn_params)
-	channel = connection.channel()
+	pika_conn = pika.BlockingConnection(pika_params)
+	channel = pika_conn.channel()
 	# tell rabbit to send only one message at a time.
 	#    wait til a worker has acknowledged its message in progress to start it again
 	channel.basic_qos(prefetch_count=1)
@@ -34,6 +74,7 @@ def main():
 	channel.start_consuming()
 
 if __name__ == '__main__':
+	process('28be9367-7272-4058-a1a8-cd03509901a4')
 	try:
 		main()
 	except KeyboardInterrupt:
