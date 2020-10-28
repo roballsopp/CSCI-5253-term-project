@@ -1,33 +1,45 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import useApi from './useApi';
+import { useAudioFile } from './audio-file-context';
 import useFileSelector from './useFileSelector';
+import ProcessingDialog from './ProcessingDialog';
 
 export default function App() {
-	const { getUploadUrl, uploadFile, beginProcessingJob } = useApi();
+	const [dialogOpen, setDialogOpen] = React.useState(false);
+	const { setAudioFile } = useAudioFile();
 
 	const handleFileSelected = React.useCallback(
 		async (e) => {
-			const file = e.target.files[0];
-			try {
-				const { url, filename } = await getUploadUrl();
-				await uploadFile(file, url);
-				const resp = await beginProcessingJob(filename);
-				console.log("HI", resp);
-			} catch (err) {
-				console.error(err);
-			}
+			setAudioFile(e.target.files[0]);
 		},
-		[getUploadUrl, uploadFile, beginProcessingJob]
+		[setAudioFile]
 	);
+
+	const handleDialogOpen = () => {
+		setDialogOpen(true);
+	};
+
+	const handleDialogClose = () => {
+		setDialogOpen(false);
+	};
+
+	const handleProcessingComplete = (results) => {
+		console.log('DONE!', results);
+	};
 
 	const openFileSelector = useFileSelector({ accept: '.wav', onFilesSelected: handleFileSelected });
 
 	return (
-		<div>
-			<Button variant="contained" color="primary" onClick={openFileSelector}>
-				Select File
-			</Button>
-		</div>
+		<React.Fragment>
+			<div>
+				<Button variant="contained" color="primary" onClick={openFileSelector}>
+					Select File
+				</Button>
+				<Button variant="contained" color="secondary" onClick={handleDialogOpen}>
+					Find Transients
+				</Button>
+			</div>
+			<ProcessingDialog open={dialogOpen} onRequestClose={handleDialogClose} onComplete={handleProcessingComplete} />
+		</React.Fragment>
 	);
 }

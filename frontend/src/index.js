@@ -6,13 +6,16 @@ import { ApolloProvider } from '@apollo/client';
 import apolloClient from './ApolloClient';
 import theme from './mui-theme';
 import App from './App';
+import { AudioFileProvider } from './audio-file-context';
 
 function AppWrapper() {
 	return (
 		<ApolloProvider client={apolloClient}>
 			<MuiThemeProvider theme={theme}>
 				<CssBaseline />
-				<App />
+				<AudioFileProvider>
+					<App />
+				</AudioFileProvider>
 			</MuiThemeProvider>
 		</ApolloProvider>
 	);

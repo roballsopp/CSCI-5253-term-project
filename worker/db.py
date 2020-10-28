@@ -1,5 +1,6 @@
 import os
 import psycopg2
+from psycopg2.extras import execute_values
 
 PG_DATABASE = os.getenv('PG_DATABASE')
 PG_USER = os.getenv('PG_USER')
@@ -54,8 +55,10 @@ class Connection:
 									{'job_id': job_id})
 			return parse_cursor_results(cur)
 
-	def finish_processing(self, job_id):
+	def finish_processing(self, job_id, transients):
+		formatted = [(job_id, t['sample'], t['time']) for t in transients]
 		with self._connection.cursor() as cur:
+			execute_values(cur, "INSERT INTO transients (job_id, sample, time) VALUES %s", formatted)
 			cur.execute("UPDATE processing_jobs SET state = 'success' WHERE id = %(job_id)s AND state = 'running'",
 									{'job_id': job_id})
 			return parse_cursor_results(cur)

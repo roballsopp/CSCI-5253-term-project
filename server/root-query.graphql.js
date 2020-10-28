@@ -1,5 +1,6 @@
-const { GraphQLNonNull, GraphQLObjectType, GraphQLString } = require('graphql');
+const { GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLList } = require('graphql');
 const { ProcessingJobType } = require('./processing-job');
+const { TransientType } = require('./transient/transient.graphql');
 
 module.exports = new GraphQLObjectType({
 	name: 'RootQuery',
@@ -9,12 +10,25 @@ module.exports = new GraphQLObjectType({
 			args: {
 				jobId: {
 					type: GraphQLNonNull(GraphQLString),
-					description: 'The operation id for the speech to text operation',
+					description: 'The job id for the processing job',
 				},
 			},
 			resolve: (_, args, ctx) => {
 				const { jobId } = args;
 				return ctx.models.processingJob.findById(jobId);
+			},
+		},
+		transients: {
+			type: GraphQLNonNull(GraphQLList(GraphQLNonNull(TransientType))),
+			args: {
+				jobId: {
+					type: GraphQLNonNull(GraphQLString),
+					description: 'The job id for the processing job',
+				},
+			},
+			resolve: (_, args, ctx) => {
+				const { jobId } = args;
+				return ctx.models.transient.findByJobId(jobId);
 			},
 		},
 		uploadUrl: {

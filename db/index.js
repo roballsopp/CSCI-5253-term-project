@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 const ProcessingJob = require('./models/ProcessingJob');
+const Transient = require('./models/Transient');
 
 module.exports = ({ database, user, password, host, logging = false }) => {
 	// TODO: wrap logger
@@ -18,6 +19,7 @@ module.exports = ({ database, user, password, host, logging = false }) => {
 	});
 
 	ProcessingJob.init(sequelize);
+	Transient.init(sequelize);
 
 	return sequelize.authenticate().then(() => sequelize);
 };

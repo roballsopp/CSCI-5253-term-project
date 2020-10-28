@@ -1,4 +1,5 @@
 import numpy as np
+import functools
 
 # the size of the moving average filter in seconds of audio
 LOBE_SIZE_SEC = 40 / 1000
@@ -7,7 +8,8 @@ def get_transients(wav):
 	print('Processing...')
 	lobe_size = round(wav.sample_rate * LOBE_SIZE_SEC)
 	rectified = np.abs(wav.get_data())
-	out = np.convolve(rectified[0], diff_kernel(lobe_size), mode='valid')
+	chan_sum = np.sum(rectified, axis=0)
+	out = np.convolve(chan_sum, diff_kernel(lobe_size), mode='valid')
 	# smoothing
 	likelihood = np.convolve(out, np.ones((lobe_size,)), mode='same')
 	# peak finding
@@ -19,8 +21,8 @@ def get_transients(wav):
 	# normalize
 	out = out / np.amax(out)
 	# filter out low likelihood
-	out = (out > 0.1).astype(np.float)
-	return np.expand_dims(out, 0)
+	out = out > 0.1
+	return [{ 'sample': i, 'time': i / wav.sample_rate } for i in range(out.size) if out[i]]
 
 
 # generates a kernel like [-1, -2, -3, 3, 2, 1]. sharpness controls how sharp the peak is

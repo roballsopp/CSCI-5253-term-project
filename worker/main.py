@@ -32,16 +32,15 @@ def process(job_id):
 
 		job, = res['rows']
 
-		# if job['state'] != 'queued':
-		# 	raise Exception(f"Expected job state 'queued', found '{job['state']}'. Skipping message.")
+		if job['state'] != 'queued':
+			raise Exception(f"Expected job state 'queued', found '{job['state']}'. Skipping message.")
 
 		try:
 			audio_bytes = gcp.get_blob(job['file_key'])
 			pg_conn.begin_processing(job_id)
-			test_out = processor.get_transients(Wave.from_bytes(audio_bytes))
+			transients = processor.get_transients(Wave.from_bytes(audio_bytes))
 			print('Saving...')
-			Wave(test_out).to_file('toots.wav')
-			pg_conn.finish_processing(job_id)
+			pg_conn.finish_processing(job_id, transients)
 		except Exception as e:
 			pg_conn.fail_processing(job_id)
 			raise e
@@ -74,7 +73,6 @@ def main():
 	channel.start_consuming()
 
 if __name__ == '__main__':
-	process('28be9367-7272-4058-a1a8-cd03509901a4')
 	try:
 		main()
 	except KeyboardInterrupt:
