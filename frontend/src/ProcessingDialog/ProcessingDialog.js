@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import { styled, makeStyles } from '@material-ui/styles';
 import { useAudioFile } from '../audio-file-context';
+import { useTransients } from '../transients-context';
 import UploadProgress, {
 	UPLOAD_STATE_COMPLETED,
 	UPLOAD_STATE_PROCESSING,
@@ -33,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
 ProcessingDialog.propTypes = {
 	open: PropTypes.bool,
 	onRequestClose: PropTypes.func.isRequired,
-	onComplete: PropTypes.func.isRequired,
 };
 
-export default function ProcessingDialog({ open, onRequestClose, onComplete }) {
+export default function ProcessingDialog({ open, onRequestClose }) {
+	const { setTransients } = useTransients();
 	const { audioFile } = useAudioFile();
 	const classes = useStyles();
 	const [extracting, setExtracting] = React.useState(false);
@@ -70,7 +71,7 @@ export default function ProcessingDialog({ open, onRequestClose, onComplete }) {
 				throw new Error('Unable to find any transients.');
 			}
 
-			onComplete(results);
+			setTransients(results);
 			onRequestClose(e);
 		} catch (err) {
 			setUploadState(UPLOAD_STATE_FAILED);

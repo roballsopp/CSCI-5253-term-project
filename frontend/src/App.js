@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
 import { useAudioFile } from './audio-file-context';
+import { TransientsProvider } from './transients-context';
 import useFileSelector from './useFileSelector';
 import ProcessingDialog from './ProcessingDialog';
 import AudioTrack from './AudioTrack';
@@ -11,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
 		backgroundColor: theme.palette.grey[800],
 		margin: theme.spacing(1),
 		position: 'relative',
+		height: 400,
 	},
 	selectFileButton: {
 		position: 'absolute',
@@ -39,14 +41,10 @@ export default function App() {
 		setDialogOpen(false);
 	};
 
-	const handleProcessingComplete = (results) => {
-		console.log('DONE!', results);
-	};
-
 	const openFileSelector = useFileSelector({ accept: '.wav', onFilesSelected: handleFileSelected });
 
 	return (
-		<React.Fragment>
+		<TransientsProvider>
 			<div>
 				<div className={classes.audioContainer}>
 					<AudioTrack />
@@ -62,7 +60,7 @@ export default function App() {
 					</Button>
 				)}
 			</div>
-			<ProcessingDialog open={dialogOpen} onRequestClose={handleDialogClose} onComplete={handleProcessingComplete} />
-		</React.Fragment>
+			<ProcessingDialog open={dialogOpen} onRequestClose={handleDialogClose} />
+		</TransientsProvider>
 	);
 }

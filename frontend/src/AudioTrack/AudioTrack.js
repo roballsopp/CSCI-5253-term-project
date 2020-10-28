@@ -1,8 +1,9 @@
 import * as React from 'react';
-import * as WaveSurfer from 'wavesurfer.js';
-import muiPinks from '@material-ui/core/colors/pink';
+import * as WaveSurfer from '../../node_modules/wavesurfer.js/dist/wavesurfer';
+import muiBlues from '@material-ui/core/colors/blue';
 import { makeStyles } from '@material-ui/styles';
-import { useAudioFile } from './audio-file-context';
+import { useAudioFile } from '../audio-file-context';
+import useTransientRenderer from './useTransientRenderer';
 
 const useStyles = makeStyles({
 	root: {
@@ -19,14 +20,15 @@ export default function AudioTrack() {
 	const { audioFile } = useAudioFile();
 	const classes = useStyles();
 
+	useTransientRenderer(wavesurfer);
+
 	React.useEffect(() => {
 		if (!waveformRef) return;
 
 		const surfer = WaveSurfer.create({
 			container: waveformRef,
-			waveColor: muiPinks[400],
-			interact: false,
-			cursorWidth: 0,
+			waveColor: muiBlues[400],
+			height: 400,
 		});
 
 		setWavesurfer(surfer);

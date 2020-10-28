@@ -116,7 +116,6 @@ export default function useApi() {
 					query: gql`
 						query getTransients($jobId: String!) {
 							transients(jobId: $jobId) {
-								sample
 								time
 							}
 						}
