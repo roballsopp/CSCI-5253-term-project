@@ -73,6 +73,7 @@ def main():
 	channel.start_consuming()
 
 if __name__ == '__main__':
+	print('Starting worker...')
 	try:
 		main()
 	except KeyboardInterrupt:

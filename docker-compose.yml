@@ -1,0 +1,73 @@
+version: "3"
+services:
+  server:
+    build: .
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: roger
+      RABBITMQ_PWD: Dooface1
+      RABBITMQ_PORT: 5672
+      PG_DATABASE: term_project
+      PG_USER: postgres
+      PG_PWD: password
+      PG_HOST: postgres
+      AUDIO_BUCKET: term-project-audio
+      PORT: 3001
+      NODE_ENV: development
+      REQUEST_LOGGING: "true"
+      CORS_ORIGIN: http://localhost:3000
+      WORK_QUEUE: processing-queue
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/gcp.json
+    volumes:
+      - ./credentials:/app/credentials
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - rabbitmq
+      - worker
+    links:
+      - postgres
+      - rabbitmq
+      - worker
+  worker:
+    build: ./worker
+    environment:
+      PYTHONUNBUFFERED: 1
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: roger
+      RABBITMQ_PWD: Dooface1
+      RABBITMQ_PORT: 5672
+      PG_DATABASE: term_project
+      PG_USER: postgres
+      PG_PWD: password
+      PG_HOST: postgres
+      AUDIO_BUCKET: term-project-audio
+      WORK_QUEUE: processing-queue
+      GOOGLE_APPLICATION_CREDENTIALS: /app/credentials/gcp.json
+    volumes:
+      - ./credentials:/app/credentials
+    depends_on:
+      - postgres
+      - rabbitmq
+    links:
+      - postgres
+      - rabbitmq
+  rabbitmq:
+    image: "rabbitmq:alpine"
+    ports:
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: roger
+      RABBITMQ_DEFAULT_PASS: Dooface1
+  postgres:
+    image: "postgres:12.4-alpine"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: term_project
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./data:/var/lib/postgresql/data

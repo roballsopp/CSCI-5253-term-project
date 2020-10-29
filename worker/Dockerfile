@@ -1,0 +1,12 @@
+FROM python:3.8-alpine as build-step
+RUN apk update && apk add gcc musl-dev libffi-dev postgresql-dev
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+FROM python:3.8-alpine
+RUN apk update && apk add libpq
+WORKDIR /app
+COPY --from=build-step /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+COPY . .
+ENTRYPOINT ["python", "main.py"]
