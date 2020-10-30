@@ -6,7 +6,7 @@ const RabbitMQ = require('./rabbitmq');
 const { PG_DATABASE, PG_USER, PG_PWD, PG_HOST, PORT } = require('./config');
 const gqlQueries = require('./root-query.graphql');
 const gqlMutations = require('./root-mutaton.graphql');
-const connectToDb = require('../db');
+const connectToDb = require('./db');
 
 const graphqlSchema = new GraphQLSchema({ query: gqlQueries, mutation: gqlMutations });
 

@@ -6,7 +6,11 @@
   "scripts": {
     "lint": "eslint \"**/*.js\"",
     "lint-fix": "eslint \"{**/*.js,}\" --fix",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "migration:generate": "sequelize migration:generate",
+    "migrate": "sequelize db:migrate --debug=true",
+    "migrate:undo": "sequelize db:migrate:undo --debug=true"
   },
   "author": "rallsopp06@gmail.com",
   "license": "ISC",
@@ -18,7 +22,11 @@
     "express-graphql": "^0.11.0",
     "graphql": "^15.3.0",
     "graphql-iso-date": "^3.6.1",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "pg": "^8.4.2",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "^7.12.0",
