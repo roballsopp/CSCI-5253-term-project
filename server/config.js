@@ -9,6 +9,8 @@ const PG_USER = process.env.PG_USER;
 const PG_PWD = process.env.PG_PWD;
 const PG_HOST = process.env.PG_HOST;
 const PORT = process.env.PORT;
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const REQUEST_LOGGING = process.env.REQUEST_LOGGING === 'true';
 
 module.exports = {
 	AUDIO_BUCKET,
@@ -22,4 +24,6 @@ module.exports = {
 	PG_PWD,
 	PG_HOST,
 	PORT,
+	CORS_ORIGIN,
+	REQUEST_LOGGING,
 };

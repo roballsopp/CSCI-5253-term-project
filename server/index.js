@@ -19,7 +19,7 @@ Promise.all([
 		const models = createModels({ sequelize, processingQueue, storageClient });
 		const app = createServer(graphqlSchema, models);
 		// eslint-disable-next-line no-console
-		app.listen(process.env.PORT, () => console.log(`Listening on port ${PORT}`));
+		app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 	})
 	.catch((err) => {
 		console.error(err);
