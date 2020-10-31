@@ -50,7 +50,7 @@ def process(job_id):
 			raise e
 
 
-def callback(ch, method, properties, body):
+def handle_message(ch, method, properties, body):
 	message = json.loads(body.decode())
 
 	if 'jobId' not in message:
@@ -64,15 +64,24 @@ def callback(ch, method, properties, body):
 	# acknowledge message only once processing completes successfully
 	ch.basic_ack(delivery_tag=method.delivery_tag)
 
+def handle_conn_blocked(connection, thing):
+	logger.error('Connection blocked!', thing)
+
+def handle_conn_unblocked(connection, thing):
+	logger.info('Connection un-blocked', thing)
+
+
 def main():
 	pika_conn = pika.BlockingConnection(pika_params)
+	pika_conn.add_on_connection_blocked_callback(handle_conn_blocked)
+	pika_conn.add_on_connection_unblocked_callback(handle_conn_unblocked)
 	channel = pika_conn.channel()
 	# tell rabbit to send only one message at a time.
 	#    wait til a worker has acknowledged its message in progress to start it again
 	channel.basic_qos(prefetch_count=1)
 	# durable options tells rabbitmq to persist queue to disk so its there even if rabbitmq restarts
 	channel.queue_declare(queue=WORK_QUEUE, durable=True)
-	channel.basic_consume(queue=WORK_QUEUE, on_message_callback=callback)
+	channel.basic_consume(queue=WORK_QUEUE, on_message_callback=handle_message)
 	logger.info('Waiting for messages')
 	channel.start_consuming()
 

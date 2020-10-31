@@ -1,4 +1,4 @@
-const amqp = require('amqplib/callback_api');
+const amqp = require('amqplib');
 const { RABBITMQ_HOST, WORK_QUEUE, RABBITMQ_USER, RABBITMQ_PWD, RABBITMQ_PORT } = require('./config');
 
 const CONNECTION_STR = `amqp://${RABBITMQ_USER}:${RABBITMQ_PWD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}`;
@@ -6,29 +6,32 @@ const CONNECTION_STR = `amqp://${RABBITMQ_USER}:${RABBITMQ_PWD}@${RABBITMQ_HOST}
 module.exports = { connect, getQueue };
 
 function connect() {
-	return new Promise((resolve, reject) => {
-		amqp.connect(CONNECTION_STR, function (err, connection) {
-			if (err) return reject(err);
-			resolve(connection);
-		});
-	});
+	console.log(`Connecting to rabbitmq broker at ${RABBITMQ_HOST}...`);
+	return amqp.connect(CONNECTION_STR);
 }
 
-function getQueue(connection) {
-	return new Promise((resolve, reject) => {
-		connection.createChannel(function (err, channel) {
-			if (err) return reject(err);
-
-			// ensure the queue is there
-			channel.assertQueue(WORK_QUEUE, {
-				durable: true, // persist queue to disk so its there even if rabbitmq restarts
-			});
-
-			resolve({
-				send: (msg) => {
-					channel.sendToQueue(WORK_QUEUE, Buffer.from(JSON.stringify(msg)), { persistent: true });
-				},
-			});
-		});
+async function getQueue(connection) {
+	const channel = await connection.createChannel();
+	// ensure the queue is there
+	await channel.assertQueue(WORK_QUEUE, {
+		durable: true, // persist queue to disk so its there even if rabbitmq restarts
 	});
+
+	channel.on('error', (err) => {
+		console.error(err);
+	});
+
+	channel.on('blocked', (reason) => {
+		console.error('Channel blocked', reason);
+	});
+
+	channel.on('unblocked', () => {
+		console.log('Channel unblocked');
+	});
+
+	return {
+		send: (msg) => {
+			return channel.sendToQueue(WORK_QUEUE, Buffer.from(JSON.stringify(msg)), { persistent: true });
+		},
+	};
 }
