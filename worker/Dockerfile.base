@@ -6,5 +6,4 @@ RUN pip install -r requirements.txt
 
 FROM python:3.8-alpine
 RUN apk update && apk add libpq
-WORKDIR /app
 COPY --from=build-step /usr/local/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
