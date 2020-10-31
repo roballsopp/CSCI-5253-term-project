@@ -1,6 +1,9 @@
 import os
+import logging
 import psycopg2
 from psycopg2.extras import execute_values
+
+logger = logging.getLogger(__name__)
 
 PG_DATABASE = os.getenv('PG_DATABASE')
 PG_USER = os.getenv('PG_USER')
@@ -29,7 +32,9 @@ def parse_cursor_results(cur):
 
 class Connection:
 	def __init__(self):
+		logger.info(f'Connecting to {PG_DATABASE} db at {PG_HOST}...')
 		self._connection = psycopg2.connect(database=PG_DATABASE, user=PG_USER, password=PG_PWD, host=PG_HOST, port="5432")
+		logger.info('Connected.')
 
 	def __enter__(self):
 		self._connection.__enter__()
