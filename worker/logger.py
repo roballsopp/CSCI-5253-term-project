@@ -1,25 +1,15 @@
 import logging
-import json
 
-logging.basicConfig(format='%(message)s', level=logging.INFO)
+logging.basicConfig(format='{"severity":"%(levelname)s","message":"%(message)s"}', level=logging.INFO)
 
 
 def info(msg):
-	logging.info(json.dumps({
-		'severity': 'info',
-		'message': msg
-	}, separators=(',', ':')))
+	logging.info(msg)
 
 
 def warn(msg):
-	logging.info(json.dumps({
-		'severity': 'warn',
-		'message': msg
-	}, separators=(',', ':')))
+	logging.info(msg)
 
 
 def error(msg):
-	logging.info(json.dumps({
-		'severity': 'error',
-		'message': msg
-	}, separators=(',', ':')))
+	logging.info(msg)
