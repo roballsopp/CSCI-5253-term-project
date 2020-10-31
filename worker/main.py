@@ -40,29 +40,33 @@ def process(job_id):
 			raise Exception(f"Expected job state 'queued', found '{job['state']}'. Skipping message.")
 
 		try:
+			logger.info('Retrieving audio...')
 			audio_bytes = gcp.get_blob(job['file_key'])
 			pg_conn.begin_processing(job_id)
+			logger.info('Finding transients...')
 			transients = processor.get_transients(Wave.from_bytes(audio_bytes))
 			logger.info('Saving...')
 			pg_conn.finish_processing(job_id, transients)
+			logger.info('Done.')
 		except Exception as e:
 			pg_conn.fail_processing(job_id)
 			raise e
 
 
 def handle_message(ch, method, properties, body):
-	message = json.loads(body.decode())
-
-	if 'jobId' not in message:
-		raise Exception('Message missing required field `jobId`')
-
+	logger.info('Received message')
 	try:
+		message = json.loads(body.decode())
+
+		if 'jobId' not in message:
+			raise Exception('Message missing required field `jobId`')
+
 		process(message['jobId'])
+
+		# acknowledge message only once processing completes successfully
+		ch.basic_ack(delivery_tag=method.delivery_tag)
 	except Exception as e:
 		traceback.print_exc()
-
-	# acknowledge message only once processing completes successfully
-	ch.basic_ack(delivery_tag=method.delivery_tag)
 
 def handle_conn_blocked(connection, thing):
 	logger.error('Connection blocked!', thing)
@@ -95,5 +99,5 @@ if __name__ == '__main__':
 			sys.exit(0)
 		except SystemExit:
 			os._exit(0)
-	except Exception as e:
-		print(e)
+	except:
+		traceback.print_exc()
