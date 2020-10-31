@@ -9,7 +9,7 @@ from Wave import Wave
 import processor
 import logging
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
