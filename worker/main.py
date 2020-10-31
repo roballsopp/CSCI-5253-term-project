@@ -61,11 +61,13 @@ def handle_message(ch, method, properties, body):
 		if 'jobId' not in message:
 			raise Exception('Message missing required field `jobId`')
 
+		logger.info(f"Processing job {message['jobId']}")
 		process(message['jobId'])
 
 		# acknowledge message only once processing completes successfully
 		ch.basic_ack(delivery_tag=method.delivery_tag)
 	except Exception as e:
+		logger.error(str(e))
 		traceback.print_exc()
 
 def handle_conn_blocked(connection, thing):
