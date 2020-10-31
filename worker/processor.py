@@ -1,11 +1,11 @@
 import numpy as np
-import logger
+import logging
 
 # the size of the moving average filter in seconds of audio
 LOBE_SIZE_SEC = 40 / 1000
 
 def get_transients(wav):
-	logger.info('Processing...')
+	logging.info('Processing...')
 	lobe_size = round(wav.sample_rate * LOBE_SIZE_SEC)
 	rectified = np.abs(wav.get_data())
 	chan_sum = np.sum(rectified, axis=0)
