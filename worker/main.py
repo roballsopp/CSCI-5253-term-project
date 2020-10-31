@@ -9,7 +9,8 @@ from Wave import Wave
 import processor
 import logging
 
-logging.basicConfig(stream=sys.stdout, format='{"severity":"%(levelname)s","message":"%(message)s"}', level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 RABBITMQ_USER = os.getenv('RABBITMQ_USER')
@@ -42,7 +43,7 @@ def process(job_id):
 			audio_bytes = gcp.get_blob(job['file_key'])
 			pg_conn.begin_processing(job_id)
 			transients = processor.get_transients(Wave.from_bytes(audio_bytes))
-			logging.info('Saving...')
+			logger.info('Saving...')
 			pg_conn.finish_processing(job_id, transients)
 		except Exception as e:
 			pg_conn.fail_processing(job_id)
@@ -72,15 +73,15 @@ def main():
 	# durable options tells rabbitmq to persist queue to disk so its there even if rabbitmq restarts
 	channel.queue_declare(queue=WORK_QUEUE, durable=True)
 	channel.basic_consume(queue=WORK_QUEUE, on_message_callback=callback)
-	logging.info('Waiting for messages')
+	logger.info('Waiting for messages')
 	channel.start_consuming()
 
 if __name__ == '__main__':
-	logging.info('Starting worker...')
+	logger.info('Starting worker...')
 	try:
 		main()
 	except KeyboardInterrupt:
-		logging.info('Interrupted')
+		logger.info('Interrupted')
 		try:
 			sys.exit(0)
 		except SystemExit:

@@ -3,6 +3,8 @@ import wave
 import logging
 from io import BytesIO
 
+logger = logging.getLogger(__name__)
+
 BYTE_DEPTH_TO_TYPE = {
 	1: np.int8,
 	2: np.int16
@@ -41,7 +43,7 @@ class Wave:
 
 	@staticmethod
 	def from_bytes(audio_bytes):
-		logging.info('Loading wav from bytes')
+		logger.info('Loading wav from bytes')
 
 		with wave.open(BytesIO(audio_bytes), mode='rb') as file:
 			sample_rate = file.getframerate()
@@ -50,10 +52,10 @@ class Wave:
 			num_channels = file.getnchannels()
 			num_samples = file.getnframes()
 
-			logging.info('Sample Rate: ' + str(sample_rate))
-			logging.info('Bit Depth: ' + str(bit_depth))
-			logging.info('Channels: ' + str(num_channels))
-			logging.info('Num Samples: ' + str(num_samples))
+			logger.info('Sample Rate: ' + str(sample_rate))
+			logger.info('Bit Depth: ' + str(bit_depth))
+			logger.info('Channels: ' + str(num_channels))
+			logger.info('Num Samples: ' + str(num_samples))
 
 			buf = file.readframes(num_samples)
 
