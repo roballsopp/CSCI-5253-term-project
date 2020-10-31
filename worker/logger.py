@@ -1,7 +1,7 @@
 import logging
 import json
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(message)s', level=logging.INFO)
 
 
 def info(msg):
