@@ -31,6 +31,7 @@ async function getQueue(connection) {
 
 	return {
 		send: (msg) => {
+			console.log(`Sending message on queue "${WORK_QUEUE}"`);
 			return channel.sendToQueue(WORK_QUEUE, Buffer.from(JSON.stringify(msg)), { persistent: true });
 		},
 	};

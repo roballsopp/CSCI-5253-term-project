@@ -9,7 +9,7 @@ from Wave import Wave
 import processor
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -86,7 +86,7 @@ def main():
 	# durable options tells rabbitmq to persist queue to disk so its there even if rabbitmq restarts
 	channel.queue_declare(queue=WORK_QUEUE, durable=True)
 	channel.basic_consume(queue=WORK_QUEUE, on_message_callback=handle_message)
-	logger.info('Waiting for messages')
+	logger.info(f'Waiting for messages on queue "{WORK_QUEUE}"')
 	channel.start_consuming()
 
 if __name__ == '__main__':
