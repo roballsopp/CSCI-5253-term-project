@@ -74,7 +74,7 @@ def main():
 	channel.start_consuming()
 
 if __name__ == '__main__':
-	logger.info('Starting worker...')
+	print('Starting worker...')
 	try:
 		main()
 	except KeyboardInterrupt:
