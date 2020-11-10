@@ -4,3 +4,4 @@ data/
 venv/
 credentials/
 __pycache__/
+k8s/secrets.yml
