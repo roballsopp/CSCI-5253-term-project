@@ -2,11 +2,15 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: term-project-server
+  annotations:
+    iam.gke.io/gcp-service-account: term-project-server@cedar-booth-287414.iam.gserviceaccount.com
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: term-project-worker
+  annotations:
+    iam.gke.io/gcp-service-account: term-project-worker@cedar-booth-287414.iam.gserviceaccount.com
 ---
 kind: Service
 apiVersion: v1

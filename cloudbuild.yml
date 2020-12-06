@@ -27,3 +27,4 @@ steps:
       - --filename=k8s/k8s.yml
       - --location=us-central1-b
       - --cluster=term-project
+      - --timeout=20m0s
