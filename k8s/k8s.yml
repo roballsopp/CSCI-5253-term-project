@@ -80,6 +80,13 @@ spec:
                 secretKeyRef:
                   name: term-project
                   key: RABBITMQ_PWD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "0.1"
+            limits:
+              memory: "500Mi"
+              cpu: "0.4"
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -113,6 +120,13 @@ spec:
           volumeMounts:
             - name: cloudsql
               mountPath: /cloudsql
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "0.1"
+            limits:
+              memory: "128Mi"
+              cpu: "0.2"
         - name: master
           image: gcr.io/cedar-booth-287414/term-project-worker
           volumeMounts:
@@ -155,6 +169,13 @@ spec:
               value: "localhost"
             - name: AUDIO_BUCKET
               value: "term-project-audio"
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "0.5"
+            limits:
+              memory: "2048Mi"
+              cpu: "2.0"
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -188,6 +209,13 @@ spec:
           volumeMounts:
             - name: cloudsql
               mountPath: /cloudsql
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "0.1"
+            limits:
+              memory: "128Mi"
+              cpu: "0.2"
         - name: server
           image: gcr.io/cedar-booth-287414/term-project-server
           volumeMounts:
@@ -242,3 +270,10 @@ spec:
               value: "true"
             - name: CORS_ORIGIN
               value: "http://localhost:3000"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "0.1"
+            limits:
+              memory: "128Mi"
+              cpu: "0.2"
