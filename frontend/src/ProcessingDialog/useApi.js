@@ -10,7 +10,7 @@ export default function useApi() {
 			const {
 				data: { uploadUrl },
 			} = await apolloClient.query({
-				fetchPolicy: 'network-only',
+				fetchPolicy: 'no-cache',
 				query: gql`
 					query getUploadUrl {
 						uploadUrl {

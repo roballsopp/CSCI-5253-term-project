@@ -14,4 +14,5 @@ export default new ApolloClient({
 			},
 		},
 	}),
+	queryDeduplication: false,
 });

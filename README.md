@@ -22,8 +22,10 @@
       PG_USER: <value>
       PG_PWD: <value>
     ```
-5. Deploy the cluster with `kubectl apply -f k8s/k8s.yml`, or by using the cloud build trigger. This will also create the kubernetes service accounts.
-6. Relate GCP service accounts with GKE service accounts:
+5. Enable http load balancing for the cluster with `gcloud container clusters update term-project --update-addons=HttpLoadBalancing=ENABLED`
+   * See the load balancign tutorial [here](https://cloud.google.com/kubernetes-engine/docs/how-to/load-balance-ingress#gcloud)
+6. Deploy the cluster with `kubectl apply -f k8s/k8s.yml`, or by using the cloud build trigger. This will also create the kubernetes service accounts.
+7. Relate GCP service accounts with GKE service accounts:
    ```bash
    gcloud iam service-accounts add-iam-policy-binding --role roles/iam.workloadIdentityUser --member "serviceAccount:cedar-booth-287414.svc.id.goog[default/term-project-server]" term-project-server@cedar-booth-287414.iam.gserviceaccount.com
    gcloud iam service-accounts add-iam-policy-binding --role roles/iam.workloadIdentityUser --member "serviceAccount:cedar-booth-287414.svc.id.goog[default/term-project-worker]" term-project-worker@cedar-booth-287414.iam.gserviceaccount.com

@@ -60,6 +60,14 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: roger
       RABBITMQ_DEFAULT_PASS: Dooface1
+  sql-proxy:
+    image: "gcr.io/cloudsql-docker/gce-proxy:1.16"
+    restart: always
+    ports:
+      - "2345:5432"
+    command: /cloud_sql_proxy -instances=cedar-booth-287414:us-central1:term-project=tcp:0.0.0.0:5432
+    volumes:
+      - ./credentials/cloud-sql-admin.json:/root/.config/gcloud/application_default_credentials.json
   postgres:
     image: "postgres:12.4-alpine"
     ports:
