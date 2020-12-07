@@ -1,9 +1,10 @@
 ### Deployment
 1. Create the `term-project` cluster on google cloud, preferably in the same region/zone as the db
     ```bash
-    gcloud container clusters create term-project --preemptible --zone=us-central1-b --workload-pool=<project-id>.svc.id.goog
+    gcloud container clusters create term-project --preemptible --zone=us-central1-b --num-nodes 3 --enable-autoscaling --min-nodes 1 --max-nodes 6 --workload-pool=cedar-booth-287414.svc.id.goog
     ```
-    * the `--workload-pool` option is required to bind kubernetes service accounts to gcp service accounts. [More info](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_cluster).
+   * the `--workload-pool` option is required to bind kubernetes service accounts to gcp service accounts. [More info](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#enable_on_cluster).
+   * the `--enable-autoscaling` option along with the `--min-nodes 1 --max-nodes 6` options allow the node pool to auto scale resources as needed to provide the resources requested by pods in the `k8s.yml`. [More info](https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-autoscaler)
 2. Create GCP service accounts `term-project-worker` and `term-project-server`.
    * `term-project-server` needs `Cloud SQL Client`, `Service Account Token Creator`, and `Storage Object Creator` roles
    * `term-project-worker` needs `Cloud SQL Client`, `Logs Writer`, `Monitoring Metric Writer`, and `Storage Object Viewer` roles
